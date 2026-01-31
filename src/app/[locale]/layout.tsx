@@ -13,8 +13,32 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Soontae Joo's Portfolio",
-  description: "Soontae Joo's Portfolio",
+  title: {
+    template: '%s | Soontae Joo',
+    default: 'Soontae Joo | Full-Stack Developer',
+  },
+  description: 'Soontae Joo - Full-Stack Developer Portfolio. Building innovative web experiences.',
+  keywords: ['Soontae Joo', 'Developer', 'Portfolio', 'Full-Stack', 'React', 'Next.js'],
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    url: 'https://portfolio-2026-ivory-one.vercel.app',
+    title: 'Soontae Joo | Full-Stack Developer',
+    description: 'Building innovative web experiences.',
+    siteName: 'Soontae Joo Portfolio',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Soontae Joo Portfolio',
+      },
+    ],
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 import { AdminProvider } from "@/providers/AdminProvider";
