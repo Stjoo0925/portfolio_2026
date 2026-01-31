@@ -22,6 +22,8 @@ import { AdminProvider } from "@/providers/AdminProvider";
 import { AdminControl } from "@/components/AdminControl";
 
 import { Navbar } from "@/components/Navbar";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Background } from "@/components/Background";
 
 export default async function RootLayout({
   children,
@@ -45,12 +47,20 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <AdminProvider>
-            <Navbar />
-            {children}
-            <AdminControl />
-            <Toaster />
-          </AdminProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Background />
+            <AdminProvider>
+              <Navbar />
+              {children}
+              <AdminControl />
+              <Toaster />
+            </AdminProvider>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>

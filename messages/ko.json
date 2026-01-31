@@ -1,27 +1,37 @@
 {
   "Hero": {
-    "title": "디지털 경험을 설계합니다",
-    "subtitle": "프론트엔드 엔지니어 & 보안 전문가",
-    "viewProjects": "프로젝트 보기",
-    "contactMe": "연락하기"
+    "greeting": "Portfolio",
+    "intro": "Innovative Web Experiences",
+    "name": "주순태",
+    "role": "Full-Stack Developer",
+    "description": "복잡한 문제를 간결한 코드로 해결하고 사용자 중심의 가치를 설계합니다.",
+    "viewWork": "작업물 보기",
+    "contact": "연락하기",
+    "scroll": "SCROLL"
   },
   "Projects": {
-    "title": "주요 프로젝트",
-    "project_1_title": "AI 대시보드",
-    "project_1_desc": "예측 분석 기반의 실시간 모니터링 시스템입니다.",
-    "project_2_title": "보안 금고",
-    "project_2_desc": "종단간 암호화를 지원하는 저장소 솔루션입니다."
+    "title": "Projects",
+    "viewSite": "사이트",
+    "viewCode": "코드"
   },
   "Skills": {
-    "title": "기술적 전문성"
+    "title": "Skills",
+    "subtitle": "경험이 있는 기술들"
   },
-  "Testimonials": {
-    "title": "파트너들의 한마디",
-    "quote_1": "놀라운 디테일과 보안 중심의 접근 방식이 인상적이었습니다.",
-    "quote_2": "복잡한 대시보드를 매끄러운 3D 경험으로 탈바꿈시켰습니다."
+  "Contact": {
+    "title": "Contact",
+    "available": "새로운 프로젝트를 찾고 있습니다"
+  },
+  "Footer": {
+    "copyright": "© 2025 stjoo0925"
+  },
+  "Nav": {
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact"
   },
   "Toast": {
-    "saveSuccess": "저장되었습니다",
-    "saveFailed": "저장 실패: "
+    "saveSuccess": "저장됨",
+    "saveFailed": "실패: "
   }
 }

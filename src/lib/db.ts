@@ -126,3 +126,141 @@ export async function getTestimonials(locale: string): Promise<Testimonial[]> {
     content: t.testimonials_i18n[0]?.content || '',
   }));
 }
+
+/**
+ * 특정 섹션의 모든 데이터를 DB에서 가져옵니다. (site_data 테이블 활용)
+ */
+export async function getSiteData(locale: string, section: string): Promise<Record<string, string>> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('site_data')
+    .select('key, value')
+    .eq('locale', locale)
+    .eq('section', section);
+
+  if (error) {
+    console.error(`Error fetching site_data for ${section}:`, error);
+    return {};
+  }
+
+  const result: Record<string, string> = {};
+  data?.forEach(item => {
+    result[item.key] = item.value?.content || '';
+  });
+  
+  return result;
+}
+
+/**
+ * 스킬 추가
+ */
+export async function addSkill(skill: Omit<Skill, 'id'>) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('skills').insert([skill]).select();
+  if (error) throw error;
+  return data[0];
+}
+
+/**
+ * 스킬 삭제
+ */
+export async function deleteSkill(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('skills').delete().eq('id', id);
+  if (error) throw error;
+}
+
+/**
+ * 스킬 수정
+ */
+export async function updateSkill(id: string, updates: Partial<Skill>) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('skills').update(updates).eq('id', id);
+  if (error) throw error;
+}
+
+/**
+ * 프로젝트 추가 (i18n 포함)
+ */
+export async function addProject(locale: string, project: Omit<Project, 'id'>) {
+  const supabase = await createClient();
+  
+  // 1. projects 테이블에 기본 정보 삽입
+  const { data: projectData, error: projectError } = await supabase
+    .from('projects')
+    .insert([{
+      order_index: project.order_index,
+      image_url: project.image_url,
+      link: project.link,
+      github_link: project.github_link,
+      tags: project.tags
+    }])
+    .select();
+
+  if (projectError) throw projectError;
+  const newProject = projectData[0];
+
+  // 2. projects_i18n 테이블에 언어별 정보 삽입
+  const { error: i18nError } = await supabase
+    .from('projects_i18n')
+    .insert([{
+      project_id: newProject.id,
+      locale,
+      title: project.title,
+      description: project.description
+    }]);
+
+  if (i18nError) throw i18nError;
+  
+  return { ...newProject, title: project.title, description: project.description };
+}
+
+/**
+ * 프로젝트 삭제
+ */
+export async function deleteProject(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('projects').delete().eq('id', id);
+  if (error) throw error;
+}
+
+/**
+ * 프로젝트 i18n 업데이트
+ */
+export async function updateProjectI18n(id: string, locale: string, updates: { title?: string, description?: string }) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('projects_i18n')
+    .upsert({
+      project_id: id,
+      locale,
+      ...updates
+    }, { onConflict: 'project_id,locale' });
+
+  if (error) throw error;
+}
+
+/**
+ * 프로젝트 기본 정보(이미지 등) 업데이트
+ */
+export async function updateProject(id: string, updates: Partial<Project>) {
+  const supabase = await createClient();
+  
+  // image_url, link, github_link, tags 등 projects 테이블 컬럼만 필터링
+  const projectUpdates: any = {};
+  if (updates.image_url !== undefined) projectUpdates.image_url = updates.image_url;
+  if (updates.link !== undefined) projectUpdates.link = updates.link;
+  if (updates.github_link !== undefined) projectUpdates.github_link = updates.github_link;
+  if (updates.tags !== undefined) projectUpdates.tags = updates.tags;
+  if (updates.order_index !== undefined) projectUpdates.order_index = updates.order_index;
+
+  if (Object.keys(projectUpdates).length === 0) return;
+
+  const { error } = await supabase
+    .from('projects')
+    .update(projectUpdates)
+    .eq('id', id);
+
+  if (error) throw error;
+}

@@ -1,26 +1,29 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
-import { EditableText } from '@/components/EditableText';
+import { useLocale, useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+import { ArrowDown } from 'lucide-react';
+import { useRouter } from '@/i18n/routing';
 import { useAdmin } from '@/providers/AdminProvider';
+import { EditableText } from '@/components/EditableText';
 import { updateSiteContent } from '@/app/actions/admin';
+import SplitText from '@/components/reactbits/SplitText';
+import BlurText from '@/components/reactbits/BlurText';
+import Magnet from '@/components/reactbits/Magnet';
 import { toast } from 'sonner';
-import { TestimonialsSection } from '@/components/sections/Testimonials';
-import { ProjectsSection } from '@/components/sections/Projects';
-import { SkillsSection } from '@/components/sections/Skills';
-import type { Project, Skill, Testimonial } from '@/lib/db';
 
-type HomeClientProps = {
-  projects: Project[];
-  skills: Skill[];
-  testimonials: Testimonial[];
-};
 
-export default function HomeClient({ projects, skills, testimonials }: HomeClientProps) {
-  const t = useTranslations('Hero');
-  const tToast = useTranslations('Toast');
+interface HomeClientProps {
+  siteData: Record<string, string>;
+}
+
+export default function HomeClient({ siteData }: HomeClientProps) {
   const locale = useLocale();
+  const t = useTranslations('Hero');
+  const router = useRouter();
   const { isEditMode } = useAdmin();
+
+  /* Entrance logic removed */
 
   const handleSave = async (key: string, value: string) => {
     const result = await updateSiteContent({
@@ -29,49 +32,75 @@ export default function HomeClient({ projects, skills, testimonials }: HomeClien
       key,
       value
     });
-
     if (result.success) {
-      toast.success(tToast('saveSuccess'));
-    } else {
-      toast.error(tToast('saveFailed') + result.error);
+      toast.success('저장되었습니다.');
     }
   };
 
   return (
-    <main className="flex flex-col min-h-screen">
-      <section className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-        <div className="max-w-4xl space-y-6">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl">
+    <main className="min-h-screen relative flex items-center justify-center bg-transparent">
+      {/* Hero 섹션 */}
+        <div className="max-w-4xl w-full px-6 text-center flex flex-col items-center">
+          {/* 배지 성격의 텍스트 */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground/50 mb-8"
+          >
             <EditableText 
-              content={t('title')} 
+              content={siteData.greeting || t('greeting')} 
               isEditMode={isEditMode} 
-              onSave={(newVal: string) => handleSave('title', newVal)}
+              onSave={(val) => handleSave('greeting', val)} 
             />
+          </motion.div>
+          
+          {/* 이름 & 인트로 */}
+          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] mb-8">
+            <span className="text-foreground block mb-4">
+              <SplitText text={siteData.name || t('name')} delay={0.05} duration={0.8} />
+            </span>
+            <span className="text-muted-foreground/30 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light block">
+              <BlurText text={siteData.intro || t('intro')} delay={0.5} duration={1} />
+            </span>
           </h1>
-          <p className="text-xl text-muted-foreground sm:text-2xl">
-            <EditableText 
-              content={t('subtitle')} 
-              isEditMode={isEditMode} 
-              onSave={(newVal: string) => handleSave('subtitle', newVal)}
-            />
-          </p>
-          <div className="flex justify-center gap-4">
-            <button className="rounded-full bg-primary px-8 py-3 text-primary-foreground shadow-lg transition-transform hover:scale-105">
-              {t('viewProjects')}
-            </button>
-            <button className="rounded-full border border-border bg-background px-8 py-3 transition-transform hover:scale-105">
-              {t('contactMe')}
-            </button>
-          </div>
-        </div>
-      </section>
+          
+          {/* 설명 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="max-w-2xl mx-auto mb-12"
+          >
+            <p className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed">
+              <EditableText 
+                content={siteData.description || t('description')} 
+                isEditMode={isEditMode} 
+                onSave={(val) => handleSave('description', val)} 
+                multiline
+              />
+            </p>
+          </motion.div>
 
-      <ProjectsSection projects={projects} />
-      <SkillsSection skills={skills} />
-      <TestimonialsSection testimonials={testimonials} />
-      
-      {/* Background decoration */}
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(0,209,255,0.05),transparent)] pointer-events-none" />
+          {/* CTA 버튼 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
+          >
+            <Magnet strength={0.3}>
+              <button 
+                onClick={() => router.push('/work')}
+                className="px-10 py-4 bg-foreground text-background font-bold rounded-full hover:scale-105 transition-transform text-lg"
+              >
+                포트폴리오 보기
+              </button>
+            </Magnet>
+          </motion.div>
+        </div>
+
+        {/* 히어로 페이지이므로 스크롤 안내 제거 */}
     </main>
   );
 }

@@ -38,7 +38,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               whileHover={{ rotateY: 10, translateZ: 20 }}
               style={{ perspective: 1000 }}
             >
-              <Card className="glass-dark border-primary/20 hover:border-primary/50 transition-all duration-500">
+              <Card className="border-primary/20 hover:border-primary/50 transition-all duration-500">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-4">
                     {item.avatar_url ? (

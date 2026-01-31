@@ -16,15 +16,17 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Simple OTP verify mock for now (will use server actions)
+  // OTP verify using server action
   const verifyOtp = async (otp: string) => {
-    // This will call a server action
-    if (otp === '123456') { // Placeholder
+    const { checkAdminOTP } = await import('@/app/actions/admin');
+    const isValid = await checkAdminOTP(otp);
+    
+    if (isValid) {
       setIsAdmin(true);
-      toast.success('Admin mode activated');
+      toast.success('관리자 모드가 활성화되었습니다.');
       return true;
     }
-    toast.error('Invalid OTP');
+    toast.error('잘못된 OTP 번호입니다.');
     return false;
   };
 

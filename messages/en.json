@@ -1,27 +1,37 @@
 {
   "Hero": {
-    "title": "Crafting Digital Experiences",
-    "subtitle": "Frontend Engineer & Security Specialist",
-    "viewProjects": "View Projects",
-    "contactMe": "Contact Me"
+    "greeting": "Portfolio",
+    "intro": "Designing the Future of Web",
+    "name": "Soontae Joo",
+    "role": "Full-Stack Developer",
+    "description": "Solving complex problems with elegant code and designing user-centric values.",
+    "viewWork": "View Work",
+    "contact": "Get in Touch",
+    "scroll": "SCROLL"
   },
   "Projects": {
-    "title": "Featured Projects",
-    "project_1_title": "AI Dashboard",
-    "project_1_desc": "Real-time analytics with predictive insights.",
-    "project_2_title": "Secure Vault",
-    "project_2_desc": "End-to-end encrypted storage solution."
+    "title": "Projects",
+    "viewSite": "Site",
+    "viewCode": "Code"
   },
   "Skills": {
-    "title": "Technical Expertise"
+    "title": "Skills",
+    "subtitle": "Technologies I work with"
   },
-  "Testimonials": {
-    "title": "Kind Words from Partners",
-    "quote_1": "Incredible attention to detail and security-first approach.",
-    "quote_2": "Transformed our complex dashboard into a seamless 3D experience."
+  "Contact": {
+    "title": "Contact",
+    "available": "Available for new projects"
+  },
+  "Footer": {
+    "copyright": "© 2025 stjoo0925"
+  },
+  "Nav": {
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact"
   },
   "Toast": {
-    "saveSuccess": "Saved successfully",
-    "saveFailed": "Failed to save: "
+    "saveSuccess": "Saved",
+    "saveFailed": "Failed: "
   }
 }
