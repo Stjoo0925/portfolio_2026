@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS projects_i18n CASCADE;
 DROP TABLE IF EXISTS projects CASCADE;
 DROP TABLE IF EXISTS skills CASCADE;
 DROP TABLE IF EXISTS site_data CASCADE;
+DROP TABLE IF EXISTS careers CASCADE;
+DROP TABLE IF EXISTS careers_i18n CASCADE;
 
 -- 1. Site Metadata & General Content
 CREATE TABLE site_data (
@@ -277,5 +279,131 @@ INSERT INTO skills (category, name, icon_name, proficiency, order_index) VALUES
 -- 3. 본인 계정으로 Auth 설정을 합니다 (Admin 사용자).
 -- 4. URL과 Anon Key를 .env.local에 설정합니다.
 --
--- 참고: Testimonials(동료/거래처 평가)는 현재 비활성화 상태입니다.
--- 활성화하려면 is_visible = true인 데이터를 추가하세요.
+-- =========================================
+-- 5. Careers (경력 및 이력사항)
+-- =========================================
+CREATE TABLE careers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_name TEXT NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE, -- NULL이면 현재 재직 중
+  is_current BOOLEAN DEFAULT false,
+  order_index INT DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE careers_i18n (
+  career_id UUID REFERENCES careers(id) ON DELETE CASCADE,
+  locale TEXT NOT NULL,
+  role TEXT NOT NULL,
+  description TEXT, -- 주요 업무 및 성과 (Markdown 지원 가능)
+  PRIMARY KEY (career_id, locale)
+);
+
+-- RLS for Careers
+ALTER TABLE careers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE careers_i18n ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public Read Careers" ON careers FOR SELECT USING (true);
+CREATE POLICY "Public Read Careers i18n" ON careers_i18n FOR SELECT USING (true);
+CREATE POLICY "Admin Update Careers" ON careers FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin Update Careers i18n" ON careers_i18n FOR ALL USING (auth.role() = 'authenticated');
+
+-- =========================================
+-- Sample Data for Careers
+-- =========================================
+INSERT INTO careers (id, company_name, start_date, end_date, is_current, order_index) VALUES
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'YUSCON', '2023-01-01', NULL, true, 1);
+
+INSERT INTO careers_i18n (career_id, locale, role, description) VALUES
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ko', '웹 개발자 (Web Developer)', 
+   '**주요 업무:**
+- Terra Survey 제품군 웹 애플리케이션 개발 및 유지보수
+- 사내 업무 효율화를 위한 백오피스 시스템 구축
+- 레거시 시스템의 현대화 및 성능 최적화 주도
+- Docker 기반의 CI/CD 파이프라인 구축 및 운영'),
+  
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'en', 'Web Developer', 
+   '**Key and Responsibilities:**
+- Develop and maintain web applications for Terra Survey product line
+- Build back-office systems for internal efficiency
+- Lead modernization and performance optimization of legacy systems
+- Establish and operate Docker-based CI/CD pipelines');
+
+-- =========================================
+-- 6. Site Data (UI 텍스트 및 레이블) - messages/ko.json, en.json 내용 포함
+-- =========================================
+
+INSERT INTO site_data (locale, section, key, value) VALUES
+  -- Korean (ko)
+  ('ko', 'Hero', 'greeting', '{"content": "Portfolio"}'),
+  ('ko', 'Hero', 'intro', '{"content": "Innovative Web Experiences"}'),
+  ('ko', 'Hero', 'name', '{"content": "주순태"}'),
+  ('ko', 'Hero', 'role', '{"content": "Full-Stack Developer"}'),
+  ('ko', 'Hero', 'description', '{"content": "복잡한 문제를 간결한 코드로 해결하고 사용자 중심의 가치를 설계합니다."}'),
+  ('ko', 'Hero', 'viewWork', '{"content": "작업물 보기"}'),
+  ('ko', 'Hero', 'contact', '{"content": "연락하기"}'),
+  ('ko', 'Hero', 'scroll', '{"content": "SCROLL"}'),
+  
+  ('ko', 'About', 'title', '{"content": "창의적인 해결책으로 비즈니스 가치를 높이는 개발자"}'),
+  ('ko', 'About', 'philosophy', '{"content": "단순히 돌아가는 코드가 아닌, 누구나 읽기 좋고 유지보수가 쉬운 시스템을 구축하는 것을 최우선으로 생각합니다."}'),
+  ('ko', 'About', 'approach', '{"content": "사용자의 목소리에 귀를 기울이고, 기술적 한계를 뛰어넘는 최적의 UX를 제공하기 위해 항상 끊임없이 탐구합니다."}'),
+  
+  ('ko', 'Projects', 'title', '{"content": "Projects"}'),
+  ('ko', 'Projects', 'viewSite', '{"content": "사이트"}'),
+  ('ko', 'Projects', 'viewCode', '{"content": "코드"}'),
+  
+  ('ko', 'Skills', 'title', '{"content": "Skills"}'),
+  ('ko', 'Skills', 'subtitle', '{"content": "경험이 있는 기술들"}'),
+  
+  ('ko', 'Contact', 'title', '{"content": "Contact"}'),
+  ('ko', 'Contact', 'available', '{"content": "새로운 프로젝트를 찾고 있습니다"}'),
+  
+  ('ko', 'Footer', 'copyright', '{"content": "© 2025 stjoo0925"}'),
+  
+  ('ko', 'Nav', 'projects', '{"content": "Projects"}'),
+  ('ko', 'Nav', 'skills', '{"content": "Skills"}'),
+  ('ko', 'Nav', 'contact', '{"content": "Contact"}'),
+  
+  ('ko', 'Toast', 'saveSuccess', '{"content": "저장됨"}'),
+  ('ko', 'Toast', 'saveFailed', '{"content": "실패: "}'),
+  
+  ('ko', 'Experience', 'title', '{"content": "EXPERIENCE"}'),
+
+  -- English (en)
+  ('en', 'Hero', 'greeting', '{"content": "Portfolio"}'),
+  ('en', 'Hero', 'intro', '{"content": "Designing the Future of Web"}'),
+  ('en', 'Hero', 'name', '{"content": "Soontae Joo"}'),
+  ('en', 'Hero', 'role', '{"content": "Full-Stack Developer"}'),
+  ('en', 'Hero', 'description', '{"content": "Solving complex problems with elegant code and designing user-centric values."}'),
+  ('en', 'Hero', 'viewWork', '{"content": "View Work"}'),
+  ('en', 'Hero', 'contact', '{"content": "Get in Touch"}'),
+  ('en', 'Hero', 'scroll', '{"content": "SCROLL"}'),
+
+  ('en', 'About', 'title', '{"content": "A developer who enhances business value with creative solutions"}'),
+  ('en', 'About', 'philosophy', '{"content": "I prioritize building systems that are readable and easy to maintain, not just code that works."}'),
+  ('en', 'About', 'approach', '{"content": "I listen directly to users and constantly explore to provide optimal UX beyond technical limits."}'),
+
+  ('en', 'Projects', 'title', '{"content": "Projects"}'),
+  ('en', 'Projects', 'viewSite', '{"content": "Site"}'),
+  ('en', 'Projects', 'viewCode', '{"content": "Code"}'),
+
+  ('en', 'Skills', 'title', '{"content": "Skills"}'),
+  ('en', 'Skills', 'subtitle', '{"content": "Technologies I work with"}'),
+
+  ('en', 'Contact', 'title', '{"content": "Contact"}'),
+  ('en', 'Contact', 'available', '{"content": "Available for new projects"}'),
+
+  ('en', 'Footer', 'copyright', '{"content": "© 2025 stjoo0925"}'),
+
+  ('en', 'Nav', 'projects', '{"content": "Projects"}'),
+  ('en', 'Nav', 'skills', '{"content": "Skills"}'),
+  ('en', 'Nav', 'contact', '{"content": "Contact"}'),
+
+  ('en', 'Toast', 'saveSuccess', '{"content": "Saved"}'),
+  ('en', 'Toast', 'saveFailed', '{"content": "Failed: "}'),
+
+  ('en', 'Experience', 'title', '{"content": "EXPERIENCE"}')
+ON CONFLICT (locale, section, key) 
+DO UPDATE SET value = EXCLUDED.value;
+

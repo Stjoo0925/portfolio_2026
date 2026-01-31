@@ -116,6 +116,60 @@ export async function updateProjectAction(id: string, locale: string, updates: a
     }
 
     revalidatePath('/[locale]/work', 'page');
+    revalidatePath(`/${locale}/work`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function addCareerAction(locale: string, career: any) {
+  const { addCareer } = await import('@/lib/db');
+  try {
+    await addCareer(locale, career);
+    revalidatePath('/[locale]/work', 'page');
+    revalidatePath(`/${locale}/work`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function updateCareerAction(id: string, locale: string, updates: any) {
+  const { updateCareer, updateCareerI18n } = await import('@/lib/db');
+  try {
+    // 1. i18n update
+    if (updates.role !== undefined || updates.description !== undefined) {
+      await updateCareerI18n(id, locale, {
+        role: updates.role,
+        description: updates.description
+      });
+    }
+
+    // 2. basic info update
+    if (
+      updates.company_name !== undefined ||
+      updates.start_date !== undefined ||
+      updates.end_date !== undefined ||
+      updates.is_current !== undefined ||
+      updates.order_index !== undefined
+    ) {
+      await updateCareer(id, updates);
+    }
+    
+    revalidatePath('/[locale]/work', 'page');
+    revalidatePath(`/${locale}/work`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteCareerAction(id: string) {
+  const { deleteCareer } = await import('@/lib/db');
+  try {
+    await deleteCareer(id);
+    revalidatePath('/[locale]/work', 'page');
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

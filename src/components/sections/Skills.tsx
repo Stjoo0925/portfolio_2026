@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations, useLocale } from 'next-intl';
-import ShinyText from '@/components/reactbits/ShinyText';
+// Removed ShinyText import
 import { useAdmin } from '@/providers/AdminProvider';
 import { EditableText } from '@/components/EditableText';
 import { updateSiteContent, addNewSkill, removeSkill, editSkill } from '@/app/actions/admin';
@@ -97,8 +97,13 @@ export function SkillsSection({ skills, data }: SkillsSectionProps) {
           viewport={{ once: true }}
           className="mb-32 text-center"
         >
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 uppercase">
-            <ShinyText text={data.title || t('title')} className="text-foreground" shimmerWidth={300} />
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 uppercase text-foreground">
+             <EditableText 
+               content={data.title || t('title')} 
+               isEditMode={isEditMode} 
+               onSave={(val) => handleSaveText('title', val)}
+               multiline={false}
+             />
           </h2>
           <p className="text-muted-foreground text-sm font-mono tracking-widest uppercase">
             <EditableText 

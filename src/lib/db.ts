@@ -12,6 +12,18 @@ export type Project = {
   description: string;
 };
 
+// 경력 타입 정의
+export type Career = {
+  id: string;
+  company_name: string;
+  start_date: string;
+  end_date: string | null;
+  is_current: boolean;
+  order_index: number;
+  role: string;
+  description: string;
+};
+
 // 스킬 타입 정의
 export type Skill = {
   id: string;
@@ -153,6 +165,46 @@ export async function getSiteData(locale: string, section: string): Promise<Reco
 }
 
 /**
+ * 경력 목록을 DB에서 가져옵니다.
+ */
+export async function getCareers(locale: string): Promise<Career[]> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('careers')
+    .select(`
+      id,
+      company_name,
+      start_date,
+      end_date,
+      is_current,
+      order_index,
+      careers_i18n!inner (
+        role,
+        description
+      )
+    `)
+    .eq('careers_i18n.locale', locale)
+    .order('start_date', { ascending: false }); // 최신순 정렬
+
+  if (error) {
+    console.error('Error fetching careers:', error);
+    return [];
+  }
+
+  return (data || []).map((c: any) => ({
+    id: c.id,
+    company_name: c.company_name,
+    start_date: c.start_date,
+    end_date: c.end_date,
+    is_current: c.is_current,
+    order_index: c.order_index,
+    role: c.careers_i18n[0]?.role || '',
+    description: c.careers_i18n[0]?.description || '',
+  }));
+}
+
+/**
  * 스킬 추가
  */
 export async function addSkill(skill: Omit<Skill, 'id'>) {
@@ -260,6 +312,120 @@ export async function updateProject(id: string, updates: Partial<Project>) {
   const { error } = await supabase
     .from('projects')
     .update(projectUpdates)
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
+/**
+ * 모든 섹션의 데이터를 DB에서 가져와서 중첩 객체(JSON) 형태로 반환합니다.
+ * next-intl의 messages 구조를 대체하기 위해 사용됩니다.
+ */
+export async function getAllSiteData(locale: string): Promise<Record<string, any>> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('site_data')
+    .select('section, key, value')
+    .eq('locale', locale);
+
+  if (error) {
+    console.error('Error fetching all site data:', error);
+    return {};
+  }
+
+  const messages: Record<string, any> = {};
+  
+  data?.forEach(item => {
+    if (!messages[item.section]) {
+      messages[item.section] = {};
+    }
+    messages[item.section][item.key] = item.value?.content || '';
+  });
+  
+  return messages;
+}
+
+
+/**
+ * 경력 추가 (i18n 포함)
+ */
+export async function addCareer(locale: string, career: Omit<Career, 'id'>) {
+  const supabase = await createClient();
+  
+  // 1. careers 테이블에 기본 정보 삽입
+  const { data: careerData, error: careerError } = await supabase
+    .from('careers')
+    .insert([{
+      company_name: career.company_name,
+      start_date: career.start_date,
+      end_date: career.end_date,
+      is_current: career.is_current,
+      order_index: career.order_index
+    }])
+    .select();
+
+  if (careerError) throw careerError;
+  const newCareer = careerData[0];
+
+  // 2. careers_i18n 테이블에 언어별 정보 삽입
+  const { error: i18nError } = await supabase
+    .from('careers_i18n')
+    .insert([{
+      career_id: newCareer.id,
+      locale,
+      role: career.role,
+      description: career.description
+    }]);
+
+  if (i18nError) throw i18nError;
+  
+  return { ...newCareer, role: career.role, description: career.description };
+}
+
+/**
+ * 경력 삭제
+ */
+export async function deleteCareer(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('careers').delete().eq('id', id);
+  if (error) throw error;
+}
+
+/**
+ * 경력 i18n 업데이트 (역할, 설명)
+ */
+export async function updateCareerI18n(id: string, locale: string, updates: { role?: string, description?: string }) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('careers_i18n')
+    .upsert({
+      career_id: id,
+      locale,
+      ...updates
+    }, { onConflict: 'career_id,locale' });
+
+  if (error) throw error;
+}
+
+/**
+ * 경력 기본 정보 (회사, 날짜 등) 업데이트
+ */
+export async function updateCareer(id: string, updates: Partial<Career>) {
+  const supabase = await createClient();
+  
+  const careerUpdates: any = {};
+  if (updates.company_name !== undefined) careerUpdates.company_name = updates.company_name;
+  if (updates.start_date !== undefined) careerUpdates.start_date = updates.start_date;
+  if (updates.end_date !== undefined) careerUpdates.end_date = updates.end_date;
+  if (updates.is_current !== undefined) careerUpdates.is_current = updates.is_current;
+  if (updates.order_index !== undefined) careerUpdates.order_index = updates.order_index;
+
+  if (Object.keys(careerUpdates).length === 0) return;
+
+  const { error } = await supabase
+    .from('careers')
+    .update(careerUpdates)
     .eq('id', id);
 
   if (error) throw error;

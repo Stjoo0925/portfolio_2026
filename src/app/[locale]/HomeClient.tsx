@@ -7,9 +7,6 @@ import { useRouter } from '@/i18n/routing';
 import { useAdmin } from '@/providers/AdminProvider';
 import { EditableText } from '@/components/EditableText';
 import { updateSiteContent } from '@/app/actions/admin';
-import SplitText from '@/components/reactbits/SplitText';
-import BlurText from '@/components/reactbits/BlurText';
-import Magnet from '@/components/reactbits/Magnet';
 import { toast } from 'sonner';
 
 
@@ -22,8 +19,6 @@ export default function HomeClient({ siteData }: HomeClientProps) {
   const t = useTranslations('Hero');
   const router = useRouter();
   const { isEditMode } = useAdmin();
-
-  /* Entrance logic removed */
 
   const handleSave = async (key: string, value: string) => {
     const result = await updateSiteContent({
@@ -58,10 +53,20 @@ export default function HomeClient({ siteData }: HomeClientProps) {
           {/* 이름 & 인트로 */}
           <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] mb-8">
             <span className="text-foreground block mb-4">
-              <SplitText text={siteData.name || t('name')} delay={0.05} duration={0.8} />
+              <EditableText 
+                content={siteData.name || t('name')} 
+                isEditMode={isEditMode} 
+                onSave={(val) => handleSave('name', val)}
+                multiline={false} 
+              />
             </span>
-            <span className="text-muted-foreground/30 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light block">
-              <BlurText text={siteData.intro || t('intro')} delay={0.5} duration={1} />
+            <span className="text-muted-foreground text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light block">
+              <EditableText 
+                content={siteData.intro || t('intro')} 
+                isEditMode={isEditMode} 
+                onSave={(val) => handleSave('intro', val)}
+                multiline={false} 
+              />
             </span>
           </h1>
           
@@ -89,16 +94,15 @@ export default function HomeClient({ siteData }: HomeClientProps) {
             transition={{ duration: 0.6, delay: 1 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
-            <Magnet strength={0.3}>
-              <button 
-                onClick={() => router.push('/work')}
-                className="px-10 py-4 bg-foreground text-background font-bold rounded-full hover:scale-105 transition-transform text-lg"
-              >
-                포트폴리오 보기
-              </button>
-            </Magnet>
+            <button 
+              onClick={() => router.push('/work')}
+              className="px-10 py-4 bg-foreground text-background font-bold rounded-full hover:scale-105 transition-transform text-lg"
+            >
+              포트폴리오 보기
+            </button>
           </motion.div>
         </div>
+
 
         {/* 히어로 페이지이므로 스크롤 안내 제거 */}
     </main>

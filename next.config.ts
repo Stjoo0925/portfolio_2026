@@ -37,6 +37,14 @@ const nextConfig: NextConfig = {
     resolveAlias: {
       'next-intl/config': './src/i18n/request.ts'
     }
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   }
 };
 

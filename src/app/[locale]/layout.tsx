@@ -13,8 +13,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Dev Portfolio",
-  description: "Advanced Portfolio with Live Editing",
+  title: "Soontae Joo's Portfolio",
+  description: "Soontae Joo's Portfolio",
 };
 
 import { AdminProvider } from "@/providers/AdminProvider";

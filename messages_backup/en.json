@@ -9,6 +9,11 @@
     "contact": "Get in Touch",
     "scroll": "SCROLL"
   },
+  "About": {
+    "title": "A developer who enhances business value with creative solutions",
+    "philosophy": "I prioritize building systems that are readable and easy to maintain, not just code that works.",
+    "approach": "I listen directly to users and constantly explore to provide optimal UX beyond technical limits."
+  },
   "Projects": {
     "title": "Projects",
     "viewSite": "Site",

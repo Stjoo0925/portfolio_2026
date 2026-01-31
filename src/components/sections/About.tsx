@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAdmin } from '@/providers/AdminProvider';
 import { EditableText } from '@/components/EditableText';
 import { updateSiteContent } from '@/app/actions/admin';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 interface AboutSectionProps {
@@ -13,6 +13,7 @@ interface AboutSectionProps {
 
 export function AboutSection({ data }: AboutSectionProps) {
   const locale = useLocale();
+  const t = useTranslations('About');
   const { isEditMode } = useAdmin();
 
   const handleSave = async (key: string, value: string) => {
@@ -41,7 +42,7 @@ export function AboutSection({ data }: AboutSectionProps) {
         <div className="md:w-3/4 space-y-12">
           <h2 className="text-3xl md:text-5xl font-black tracking-tighter leading-tight">
             <EditableText 
-              content={data.title || "창의적인 해결책으로 비즈니스 가치를 높이는 개발자"} 
+              content={data.title || t('title')} 
               isEditMode={isEditMode} 
               onSave={(val) => handleSave('title', val)} 
               multiline
@@ -53,7 +54,7 @@ export function AboutSection({ data }: AboutSectionProps) {
               <h3 className="text-[10px] font-black tracking-[0.3em] uppercase text-accent">philosophy</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 <EditableText 
-                  content={data.philosophy || "단순히 돌아가는 코드가 아닌, 누구나 읽기 좋고 유지보수가 쉬운 시스템을 구축하는 것을 최우선으로 생각합니다."} 
+                  content={data.philosophy || t('philosophy')} 
                   isEditMode={isEditMode} 
                   onSave={(val) => handleSave('philosophy', val)} 
                   multiline
@@ -64,7 +65,7 @@ export function AboutSection({ data }: AboutSectionProps) {
               <h3 className="text-[10px] font-black tracking-[0.3em] uppercase text-accent">approach</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 <EditableText 
-                  content={data.approach || "사용자의 목소리에 귀를 기울이고, 기술적 한계를 뛰어넘는 최적의 UX를 제공하기 위해 항상 끊임없이 탐구합니다."} 
+                  content={data.approach || t('approach')} 
                   isEditMode={isEditMode} 
                   onSave={(val) => handleSave('approach', val)} 
                   multiline
