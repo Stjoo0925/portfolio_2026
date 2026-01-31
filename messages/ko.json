@@ -1,0 +1,27 @@
+{
+  "Hero": {
+    "title": "디지털 경험을 설계합니다",
+    "subtitle": "프론트엔드 엔지니어 & 보안 전문가",
+    "viewProjects": "프로젝트 보기",
+    "contactMe": "연락하기"
+  },
+  "Projects": {
+    "title": "주요 프로젝트",
+    "project_1_title": "AI 대시보드",
+    "project_1_desc": "예측 분석 기반의 실시간 모니터링 시스템입니다.",
+    "project_2_title": "보안 금고",
+    "project_2_desc": "종단간 암호화를 지원하는 저장소 솔루션입니다."
+  },
+  "Skills": {
+    "title": "기술적 전문성"
+  },
+  "Testimonials": {
+    "title": "파트너들의 한마디",
+    "quote_1": "놀라운 디테일과 보안 중심의 접근 방식이 인상적이었습니다.",
+    "quote_2": "복잡한 대시보드를 매끄러운 3D 경험으로 탈바꿈시켰습니다."
+  },
+  "Toast": {
+    "saveSuccess": "저장되었습니다",
+    "saveFailed": "저장 실패: "
+  }
+}

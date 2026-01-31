@@ -1,0 +1,27 @@
+{
+  "Hero": {
+    "title": "Crafting Digital Experiences",
+    "subtitle": "Frontend Engineer & Security Specialist",
+    "viewProjects": "View Projects",
+    "contactMe": "Contact Me"
+  },
+  "Projects": {
+    "title": "Featured Projects",
+    "project_1_title": "AI Dashboard",
+    "project_1_desc": "Real-time analytics with predictive insights.",
+    "project_2_title": "Secure Vault",
+    "project_2_desc": "End-to-end encrypted storage solution."
+  },
+  "Skills": {
+    "title": "Technical Expertise"
+  },
+  "Testimonials": {
+    "title": "Kind Words from Partners",
+    "quote_1": "Incredible attention to detail and security-first approach.",
+    "quote_2": "Transformed our complex dashboard into a seamless 3D experience."
+  },
+  "Toast": {
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Failed to save: "
+  }
+}
